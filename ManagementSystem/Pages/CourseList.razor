@@ -1,0 +1,81 @@
+﻿@page "/courselist"
+@using Csla;
+@using ManagementSystem.BusinessLogicLayer;
+@using MudBlazor;
+@inject IDataPortalFactory Factory
+@inject IDialogService DialogService
+
+<MudDataGrid T="CourseBL" Items="@courseList" @bind-SelectedItem="@selectedCourse" MultiSelection="false" Filterable="false" SortMode="@SortMode.None" Groupable="false">
+    <Columns>
+        <PropertyColumn Property="x => x.Name" />
+        <PropertyColumn Property="x => x.Description" />
+        <PropertyColumn Property="x => x.Code" Title="Code" />
+        <PropertyColumn Property="x => x.Credits" />
+       
+       
+        <TemplateColumn CellClass="d-flex justify-end">
+            <CellTemplate>
+                <MudStack Row>
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="delete" Color="@Color.Error" OnClick="OnButtonClicked"></MudIconButton>
+                    <MudIconButton Icon="@Icons.Material.Filled.Update" aria-label="update" Color="@Color.Primary" OnClick="Update"></MudIconButton>
+                </MudStack>
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
+
+
+<MudSwitch @bind-Checked="_loading">Show Loading</MudSwitch>
+
+@code {
+
+    private bool _loading;
+    public CourseListBL courseList { get; set; }
+    public CourseBL selectedCourse {get;set;}
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        courseList = Factory.GetPortal<CourseListBL>().Fetch();
+
+    }
+    public void Update()
+    {
+        if (selectedCourse.IsValid)
+        {
+            Modal(selectedCourse);
+            courseList = courseList.Save();
+        }
+
+
+    }
+    public void Modal(CourseBL selectedCourse)
+    {
+        var options = new DialogOptions { MaxWidth = MaxWidth.Medium, FullWidth = true, CloseOnEscapeKey = true };
+        DialogService.Show<Update>("Update", options);
+    }
+    private async void OnButtonClicked()
+    {
+        string state = "Message box hasn't been opened yet";
+        bool? result = await DialogService.ShowMessageBox(
+            "Warning",
+            "Are you sure you want to delete?",
+            yesText: "Delete!", cancelText: "Cancel");
+        state = result == null ? "Canceled" : "Deleted!";
+        if(state =="Deleted")
+        {
+            Delete(selectedCourse);
+        }
+
+        StateHasChanged();
+    }
+    public void Delete(CourseBL selectedCourse)
+    {
+        if (selectedCourse.IsValid)
+        {
+           selectedCourse.Delete();
+        }
+
+
+    }
+}

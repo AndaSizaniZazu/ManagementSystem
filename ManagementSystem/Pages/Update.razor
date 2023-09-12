@@ -1,0 +1,44 @@
+﻿@page "/updatecourse"
+@using Csla;
+@using ManagementSystem.BusinessLogicLayer;
+@using MudBlazor;
+@inject IDataPortalFactory Factory
+
+<PageTitle>Update</PageTitle>
+<br />
+<MudText Typo="Typo.h6">Course Information</MudText>
+<EditForm Model="@Course">
+    <DataAnnotationsValidator />
+    <Csla.Blazor.CslaValidator />
+    <MudForm>
+        <MudTextField @bind-Value="Course.Name" Label="Name" Variant="Variant.Text" For="(() => Course.Name)" Immediate>Name</MudTextField>
+        <br />
+        <MudTextField @bind-Value="Course.Description" Label="Description" Variant="Variant.Outlined">Description</MudTextField>
+        <br />
+        <MudTextField @bind-Value="Course.Code" Label="Code" Variant="Variant.Outlined">Code</MudTextField>
+        <br />
+        <MudTextField @bind-Value="Course.Credits" Label="Credits" Variant="Variant.Outlined">Credits</MudTextField>
+    </MudForm>
+</EditForm>
+<br />
+
+<MudButton Color="Color.Primary" OnClick="Save" Disabled=@(!Course.IsDirty)>Save</MudButton>
+
+@code {
+
+    public CourseBL Course { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Course = Factory.GetPortal<CourseBL>().Fetch(Course);
+
+    }
+
+    public void Save()
+    {
+        Course = Course.Save();
+    }
+
+}
+
+

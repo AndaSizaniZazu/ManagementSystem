@@ -1,0 +1,13 @@
+@using MudBlazor
+<MudPaper Width="250px" Class="d-inline-flex py-3" Elevation="0">
+    <MudNavMenu Class="mud-width-full">
+        <MudText Typo="Typo.h6" Class="px-4">Pages</MudText>
+        <MudDivider Class="my-2" />
+        <MudNavLink Href="/" Icon="@Icons.Material.Filled.Dashboard">Home</MudNavLink>
+        <MudNavGroup Title="Actions" Icon="@Icons.Material.Filled.AdminPanelSettings" Expanded="true">
+            <MudNavLink Href="/addcourse" Icon="@Icons.Material.Filled.Book" Match="NavLinkMatch.Prefix">Add a Course</MudNavLink>
+            <MudNavLink Href="/courselist" Icon="@Icons.Material.Filled.ViewList" Match="NavLinkMatch.Prefix">Course List</MudNavLink>
+        </MudNavGroup>
+            
+    </MudNavMenu>
+</MudPaper>
