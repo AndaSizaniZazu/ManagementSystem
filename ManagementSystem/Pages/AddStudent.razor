@@ -1,0 +1,64 @@
+﻿@page "/addstudent"
+@using Csla;
+@using ManagementSystem.BusinessLogicLayer;
+@using MudBlazor;
+@inject IDataPortalFactory Factory
+
+<PageTitle>Add a Student</PageTitle>
+
+<MudText Typo="Typo.h6">Student</MudText>
+
+<EditForm Model="@Student">
+    <DataAnnotationsValidator/>
+   <Csla.Blazor.CslaValidator/>
+<MudForm>
+        
+    <MudGrid class="justify-space-between" >
+            <MudItem sm="12" md="12">
+                <MudTextField @bind-Value="Student.FullName" Label="Name" Variant="Variant.Outlined" For="(() => Student.FullName)" Immediate>Name</MudTextField>
+            </MudItem>
+            <MudItem sm="12" md="12">
+                <MudTextField @bind-Value="Student.StudentEmail" Label="Email" Variant="Variant.Outlined" For="(() => Student.StudentEmail)" Immediate>Email</MudTextField>
+            </MudItem>
+            <MudItem sm="12" md="12">
+                <MudTextField @bind-Value="Student.StudentPhoneNumber" Label="Cell Number" Variant="Variant.Outlined" For="(() => Student.StudentPhoneNumber)" Immediate>Phone Number</MudTextField>
+            </MudItem>
+            <MudItem sm="12" md="12">
+                <MudDatePicker PickerVariant="PickerVariant.Dialog" Label="Enrolment Date" @bind-Date="Student.EnrollmentDate" />
+        </MudItem>
+        <MudItem sm="12" md="12">
+            <MudAutocomplete T="string" CoerceText="@coerceText" CoerceValue="@coerceValue" Label="Select a Course" @bind-Value="Student.CourseName" SearchFunc="@CourseSearch" />
+            </MudItem>
+        <MudCardActions>
+                <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="Save" Disabled=@(!Student.IsValid)>Add Student</MudButton>
+            </MudCardActions>
+        </MudGrid>
+</MudForm>
+</EditForm>
+
+@code {
+
+    public StudentBL Student { get; set; }
+    public bool coerceText { get; set; } = true;
+    public bool coerceValue { get; set; } = true;
+
+    protected override  async Task OnInitializedAsync()
+    {
+        Student = Factory.GetPortal<StudentBL>().Create();
+
+    }
+    private async Task<IEnumerable<string>> CourseSearch(string value)
+    {
+
+
+        if (string.IsNullOrEmpty(value))
+            return Student.CoursesList.Select(x => x.Value);
+        return Student.CoursesList.Select(x => x.Value).Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    public void Save()
+    {
+        Student = Student.Save();
+    }
+    
+}

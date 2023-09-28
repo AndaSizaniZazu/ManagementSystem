@@ -18,5 +18,14 @@ namespace ManagementSystem.DataAccessLayer
         [Column("Credits")]
         public int Credits { get; set; }
 
+        [Column("Department")]
+        public string Department { get; set; }
+
+        public virtual ICollection<ClassEntity> Class { get; set; }
+        public virtual ICollection<StudentEntity> Students { get; set; }
+
+
+
+
     }
 }

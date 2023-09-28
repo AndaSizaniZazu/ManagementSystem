@@ -1,0 +1,75 @@
+﻿@page "/updateclass"
+@using Csla;
+@using ManagementSystem.BusinessLogicLayer;
+@using MudBlazor;
+@inject ISnackbar Snackbar
+@inject IDataPortalFactory Factory
+
+<PageTitle>Class Information</PageTitle>
+
+<EditForm Model="@Class">
+    <DataAnnotationsValidator />
+    <Csla.Blazor.CslaValidator />
+    <MudDialog>
+        <DialogContent>
+             <MudGrid class="justify-space-between" >
+                <MudItem sm="12" md="12">
+                    <MudTextField @bind-Value="Class.ClassName" Label="Name" Variant="Variant.Outlined" For="(() => Class.ClassName)"
+                                        Immediate>Name</MudTextField>
+                </MudItem>
+                <MudItem sm="12" md="12">
+                    <MudAutocomplete T="string" CoerceText="@coerceText" CoerceValue="@coerceValue" Label="Select a Facilitator" @bind-Value="Class.FacilitatorFullName" SearchFunc="@FaciSearch" />
+                </MudItem>
+                <MudItem sm="12" md="12">
+                    <MudAutocomplete T="string" CoerceText="@coerceText" CoerceValue="@coerceValue" Label="Select a Course" @bind-Value="Class.CourseName" SearchFunc="@CourseSearch" />
+                </MudItem>
+            </MudGrid>
+
+        </DialogContent>
+        <DialogActions>
+             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Save" Disabled=@(!Class.IsDirty)>Save</MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
+
+
+
+
+ @code {
+
+    public bool coerceText { get; set; } = true;
+    public bool coerceValue { get; set; } = true;
+    [Parameter]
+    public ClassBL Class { get; set; }
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+      
+    }
+    private async Task<IEnumerable<string>> CourseSearch(string value)
+    {
+
+
+        if (string.IsNullOrEmpty(value))
+            return Class.CoursesList.Select(x => x.Value);
+        return Class.CoursesList.Select(x => x.Value).Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+    private async Task<IEnumerable<string>> FaciSearch(string value)
+    {
+
+        if (string.IsNullOrEmpty(value))
+            return Class.FacilitatorsList.Select(x => x.Value);
+        return Class.FacilitatorsList.Select(x => x.Value).Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+   private void Save()
+    {
+        MudDialog.Close(_ = Class.Save());
+
+    }
+
+}
+
+

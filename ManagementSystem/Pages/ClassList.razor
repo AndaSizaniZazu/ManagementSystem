@@ -1,19 +1,18 @@
-﻿@page "/courselist"
+﻿@page "/classlist"
 @using Csla;
 @using ManagementSystem.BusinessLogicLayer;
 @using MudBlazor;
 @inject IDataPortalFactory Factory
 @inject IDialogService DialogService
 
-<MudDataGrid T="CourseBL" Items="@courseList" Hover="true" Striped="true" MultiSelection="false" Filterable="false" SortMode="@SortMode.None" Groupable="false">
+
+
+<MudDataGrid T="ClassBL" Items="@classList" Hover="true" Striped="true" MultiSelection="false" Filterable="false" SortMode="@SortMode.None" Groupable="false">
     <Columns>
-        <PropertyColumn Property="x => x.Name" />
-        <PropertyColumn Property="x => x.Description" />
-        <PropertyColumn Property="x => x.Code" Title="Code" />
-        <PropertyColumn Property="x => x.Credits" />
-        <PropertyColumn Property="x => x.Department" />
-       
-       
+        <PropertyColumn Property="x => x.ClassName"  />
+        <PropertyColumn Property="x => x.FacilitatorFullName" />
+        <PropertyColumn Property="x => x.CourseName" />
+
         <TemplateColumn CellClass="d-flex justify-end">
             <CellTemplate>
                 <MudStack Row>
@@ -31,24 +30,24 @@
 @code {
 
     private bool _loading;
-    public CourseListBL courseList { get; set; }
+    public ClassListBL classList { get; set; }
 
 
     protected override async Task OnInitializedAsync()
     {
-        courseList = Factory.GetPortal<CourseListBL>().Fetch();
+        classList = Factory.GetPortal<ClassListBL>().Fetch();
 
     }
 
    
-    public void Modal(CourseBL course)
+    public void Modal(ClassBL item)
     {
         DialogOptions options = new DialogOptions {  FullWidth = true, CloseOnEscapeKey = true };
-        var parameters = new DialogParameters<Update>();
-        parameters.Add(x => x.Course, course);
-        DialogService.Show<Update>("Update Course",parameters, options);
+        var parameters = new DialogParameters<UpdateClass>();
+        parameters.Add(x => x.Class, item);
+        DialogService.Show<UpdateClass>("Update Class",parameters, options);
     }
-    private async void OnButtonClicked(CourseBL course)
+    private async void OnButtonClicked(ClassBL item)
     {
         string state = "Message box hasn't been opened yet";
         bool? result = await DialogService.ShowMessageBox(
@@ -59,8 +58,8 @@
         StateHasChanged();
         if(state =="Deleted!")
         {
-            course.Delete();
-           _ = await course.SaveAsync();
+            item.Delete();
+            _ = await item.SaveAsync();
 
         }
        

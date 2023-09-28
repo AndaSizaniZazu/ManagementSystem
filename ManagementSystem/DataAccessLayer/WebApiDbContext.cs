@@ -20,10 +20,38 @@ namespace ManagementSystem.DataAccessLayer
         //Bind class
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<CourseEntity>(entity => { entity.HasKey(p => p.Id); });
+            modelBuilder.Entity<ClassEntity>()
+        .HasOne(c => c.Course)               // ClassEntity has one Course
+        .WithMany(c => c.Class)           // CourseEntity has many Classes
+        .HasForeignKey(c => c.Id)          // Foreign key in ClassEntity
+        .OnDelete(DeleteBehavior.Restrict); // Specify delete behavior if needed
+
+            modelBuilder.Entity<CourseEntity>()
+        .HasKey(c => c.Id); // Define the primary key for CourseEntity
+
+            // Define the relationship with students
+            modelBuilder.Entity<CourseEntity>()
+                .HasMany(c => c.Students)           // CourseEntity has many Students
+                .WithOne(s => s.Course)             // StudentEntity has one Course
+                .HasForeignKey(s => s.Id)     // Foreign key in StudentEntity
+                .OnDelete(DeleteBehavior.Restrict);
+            // Define the primary key for CourseEntity
+            // For ClassEntity to FacilitatorEntity relationship
+            modelBuilder.Entity<ClassEntity>()
+                .HasOne(c => c.Facilitator)         // ClassEntity has one Facilitator
+                .WithMany(f => f.Class)           // FacilitatorEntity has many Classes
+                .HasForeignKey(c => c.FacilitatorId) // Foreign key in ClassEntity
+                .OnDelete(DeleteBehavior.Restrict); 
+                    modelBuilder.Entity<ClassEntity>(entity => { entity.HasKey(p => p.ClassId); });
+     
+
             base.OnModelCreating(modelBuilder);
         }
         //Db Set entities
         public DbSet<CourseEntity> Courses { get; set; }
+        public DbSet<FacilitatorEntity> Facilitators { get; set; }
+        public DbSet<StudentEntity> Students { get; set; }
+        public DbSet<ClassEntity> Classes { get; set; }
+        
     }
 }

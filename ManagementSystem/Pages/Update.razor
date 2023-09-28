@@ -2,41 +2,61 @@
 @using Csla;
 @using ManagementSystem.BusinessLogicLayer;
 @using MudBlazor;
-@inject IDataPortalFactory Factory
+@inject ISnackbar Snackbar
 
 <PageTitle>Update</PageTitle>
 <br />
-<MudText Typo="Typo.h6">Course Information</MudText>
 <EditForm Model="@Course">
     <DataAnnotationsValidator />
     <Csla.Blazor.CslaValidator />
-    <MudForm>
-        <MudTextField @bind-Value="Course.Name" Label="Name" Variant="Variant.Text" For="(() => Course.Name)" Immediate>Name</MudTextField>
-        <br />
-        <MudTextField @bind-Value="Course.Description" Label="Description" Variant="Variant.Outlined">Description</MudTextField>
-        <br />
-        <MudTextField @bind-Value="Course.Code" Label="Code" Variant="Variant.Outlined">Code</MudTextField>
-        <br />
-        <MudTextField @bind-Value="Course.Credits" Label="Credits" Variant="Variant.Outlined">Credits</MudTextField>
-    </MudForm>
+    <MudDialog>
+        <DialogContent>
+             <MudGrid class="justify-space-between" >
+            <MudItem sm="10" md="10">
+                <MudTextField @bind-Value="Course.Name" Label="Name" Variant="Variant.Text" For="(() => Course.Name)" Immediate>Name</MudTextField>
+            </MudItem>
+            <MudItem sm="10" md="10">
+                 <MudTextField @bind-Value="Course.Code" Label="Code" For="(() => Course.Code)" Immediate Variant="Variant.Outlined">Code</MudTextField>
+            </MudItem>
+             <MudItem sm="10" md="10">
+
+                 <MudTextField @bind-Value="Course.Credits" Label="Credits" Variant="Variant.Outlined" For="(() => Course.Credits)" Immediate>Credits</MudTextField>
+            </MudItem>
+            <MudItem sm="10" md="10">
+
+                <MudTextField @bind-Value="Course.Description" Label="Description" For="(() => Course.Description)" Immediate Variant="Variant.Outlined">Description</MudTextField>
+             </MudItem>
+                 <MudItem sm="10" md="10">
+
+                     <MudTextField @bind-Value="Course.Department" Label="Department" For="(() => Course.Department)" Immediate Variant="Variant.Outlined">Department</MudTextField>
+                 </MudItem>
+             </MudGrid>
+        </DialogContent>
+        <DialogActions>
+             <MudButton Variant="Variant.Filled" Color="Color.Primary"  OnClick="Save" Disabled=@(!Course.IsDirty)>Save</MudButton>
+        </DialogActions>
+    </MudDialog>
 </EditForm>
 <br />
 
-<MudButton Color="Color.Primary" OnClick="Save" Disabled=@(!Course.IsDirty)>Save</MudButton>
 
-@code {
 
+ @code {
+
+    [Parameter]
     public CourseBL Course { get; set; }
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
 
     protected override async Task OnInitializedAsync()
     {
-        Course = Factory.GetPortal<CourseBL>().Fetch(Course);
 
     }
 
-    public void Save()
+   private void Save()
     {
-        Course = Course.Save();
+        MudDialog.Close(_=Course.Save());
+
     }
 
 }

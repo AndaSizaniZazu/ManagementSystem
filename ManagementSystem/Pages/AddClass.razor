@@ -1,0 +1,75 @@
+﻿@page "/addclass"
+@using Csla;
+@using ManagementSystem.BusinessLogicLayer;
+@using MudBlazor;
+@inject IDataPortalFactory Factory
+
+<PageTitle>Add a Class</PageTitle>
+
+<MudText Typo="Typo.h6">Class Information</MudText>
+
+@if (Class != null)
+{
+    <EditForm Model="@Class">
+        <DataAnnotationsValidator/>
+        <Csla.Blazor.CslaValidator/>
+
+        <MudGrid class="justify-space-between" >
+            <MudItem sm="12" md="12">
+                <MudTextField @bind-Value="Class.ClassName" Label="Name" Variant="Variant.Outlined" For="(() => Class.ClassName)"    
+            Immediate
+                 >Name</MudTextField>
+             </MudItem>
+             <MudItem sm="12" md="12">
+             <MudAutocomplete T="string" CoerceText="@coerceText" CoerceValue="@coerceValue" Label="Select a Facilitator" @bind-Value="Class.FacilitatorFullName" SearchFunc="@FaciSearch" />
+             </MudItem>
+             <MudItem sm="12" md="12">
+             <MudAutocomplete T="string" CoerceText="@coerceText" CoerceValue="@coerceValue" Label="Select a Course" @bind-Value="Class.CourseName" SearchFunc="@CourseSearch" />
+             </MudItem>
+
+             <MudCardActions>
+                 <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="Save" Disabled=@(!Class.IsValid)>Add Class</MudButton>
+             </MudCardActions>
+         </MudGrid>
+     </EditForm>
+}
+
+@code {
+
+    public ClassBL Class { get; set; }
+    public bool coerceText { get; set; } = true;
+    public bool coerceValue { get; set; } = true;
+    public CourseListBL courseList { get; set; }
+    public FacilitatorListBL facilitatorList { get; set; }
+
+
+    protected override  async Task OnInitializedAsync()
+    {
+        Class = await Factory.GetPortal<ClassBL>().CreateAsync();
+  
+
+    }
+    private async Task<IEnumerable<string>> CourseSearch(string value)
+    {
+
+
+        if (string.IsNullOrEmpty(value))
+            return Class.CoursesList.Select(x => x.Value);
+        return Class.CoursesList.Select(x => x.Value).Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+    private async Task<IEnumerable<string>> FaciSearch(string value)
+    {
+
+        if (string.IsNullOrEmpty(value))
+            return Class.FacilitatorsList.Select(x => x.Value);
+        return Class.FacilitatorsList.Select(x => x.Value).Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+    
+
+    public void Save()
+    {
+
+        Class = Class.Save();
+    }
+    
+}

@@ -1,17 +1,16 @@
-﻿@page "/courselist"
+﻿@page "/facilitatorlist"
 @using Csla;
 @using ManagementSystem.BusinessLogicLayer;
 @using MudBlazor;
 @inject IDataPortalFactory Factory
 @inject IDialogService DialogService
 
-<MudDataGrid T="CourseBL" Items="@courseList" Hover="true" Striped="true" MultiSelection="false" Filterable="false" SortMode="@SortMode.None" Groupable="false">
+<MudDataGrid T="FacilitatorBL" Items="@facilitatorList" Hover="true" Striped="true" MultiSelection="false" Filterable="false" SortMode="@SortMode.None" Groupable="false">
     <Columns>
-        <PropertyColumn Property="x => x.Name" />
-        <PropertyColumn Property="x => x.Description" />
-        <PropertyColumn Property="x => x.Code" Title="Code" />
-        <PropertyColumn Property="x => x.Credits" />
-        <PropertyColumn Property="x => x.Department" />
+        <PropertyColumn Property="x => x.FacilitatorFullName" />
+        <PropertyColumn Property="x => x.FacilitatorEmail" />
+        <PropertyColumn Property="x => x.FacilitatorIdNumber" Title="Code" />
+        <PropertyColumn Property="x => x.FacilitatorPhoneNumber" />
        
        
         <TemplateColumn CellClass="d-flex justify-end">
@@ -31,24 +30,24 @@
 @code {
 
     private bool _loading;
-    public CourseListBL courseList { get; set; }
+    public FacilitatorListBL facilitatorList { get; set; }
 
 
     protected override async Task OnInitializedAsync()
     {
-        courseList = Factory.GetPortal<CourseListBL>().Fetch();
+        facilitatorList = Factory.GetPortal<FacilitatorListBL>().Fetch();
 
     }
 
    
-    public void Modal(CourseBL course)
+    public void Modal(FacilitatorBL facilitator)
     {
         DialogOptions options = new DialogOptions {  FullWidth = true, CloseOnEscapeKey = true };
-        var parameters = new DialogParameters<Update>();
-        parameters.Add(x => x.Course, course);
-        DialogService.Show<Update>("Update Course",parameters, options);
+        var parameters = new DialogParameters<FacilitatorInfo>();
+        parameters.Add(x => x.Facilitator, facilitator);
+        DialogService.Show<FacilitatorInfo>("Update",parameters, options);
     }
-    private async void OnButtonClicked(CourseBL course)
+    private async void OnButtonClicked(FacilitatorBL facilitator)
     {
         string state = "Message box hasn't been opened yet";
         bool? result = await DialogService.ShowMessageBox(
@@ -59,8 +58,8 @@
         StateHasChanged();
         if(state =="Deleted!")
         {
-            course.Delete();
-           _ = await course.SaveAsync();
+            facilitator.Delete();
+            _ = await facilitator.SaveAsync();
 
         }
        

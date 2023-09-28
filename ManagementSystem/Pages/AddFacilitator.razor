@@ -1,0 +1,54 @@
+﻿@page "/addfacilitator"
+@using Csla;
+@using ManagementSystem.BusinessLogicLayer;
+@using MudBlazor;
+@inject IDataPortalFactory Factory
+
+<PageTitle>Add a Facilitator</PageTitle>
+
+<MudText Typo="Typo.h6">Facilitator</MudText>
+
+<EditForm Model="@Facilitator">
+    <DataAnnotationsValidator/>
+   <Csla.Blazor.CslaValidator/>
+<MudForm>
+        
+    <MudGrid class="justify-space-between" >
+            <MudItem sm="12" md="12">
+                <MudTextField @bind-Value="Facilitator.FacilitatorFullName" Label="Name" Variant="Variant.Outlined" For="(() => Facilitator.FacilitatorFullName)" Immediate>Name</MudTextField>
+            </MudItem>
+            <MudItem sm="12" md="12">
+                <MudTextField @bind-Value="Facilitator.FacilitatorEmail" Label="Email" Variant="Variant.Outlined" For="(() => Facilitator.FacilitatorEmail)" Immediate>Email</MudTextField>
+            </MudItem>
+            <MudItem sm="12" md="12">
+                <MudTextField @bind-Value="Facilitator.FacilitatorIdNumber" Label="ID Number" Variant="Variant.Outlined" For="(() => Facilitator.FacilitatorIdNumber)" Immediate>ID Number</MudTextField>
+            </MudItem>
+            <MudItem sm="12" md="12">
+                <MudTextField @bind-Value="Facilitator.FacilitatorPhoneNumber" Label="Cell Number" Variant="Variant.Outlined" For="(() => Facilitator.FacilitatorPhoneNumber)" Immediate>Cell Number</MudTextField>
+        </MudItem>
+            <MudItem sm="12" md="12">
+                <MudTextField @bind-Value="Facilitator.Qualification" Label="Qualification" Variant="Variant.Outlined" For="(() => Facilitator.Qualification)" Immediate>Qualification</MudTextField>
+            </MudItem>
+        <MudCardActions>
+                <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="Save" Disabled=@(!Facilitator.IsValid)>Add Facilitator</MudButton>
+            </MudCardActions>
+        </MudGrid>
+</MudForm>
+</EditForm>
+
+@code {
+
+    public FacilitatorBL Facilitator { get; set; }
+
+    protected override  async Task OnInitializedAsync()
+    {
+        Facilitator = Factory.GetPortal<FacilitatorBL>().Create();
+
+    }
+
+    public void Save()
+    {
+        Facilitator = Facilitator.Save();
+    }
+    
+}

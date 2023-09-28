@@ -9,25 +9,25 @@ using Csla.DataPortalClient;
 namespace ManagementSystem.DataAccessLayer
 {
     //[Serializable]
-    public class CourseDAL : ICourseDAL
+    public class ClassDAL : IClassDAL
     {
         private readonly WebApiDbContext _dbContext;
-        public CourseDAL(WebApiDbContext dbContext)
+        public ClassDAL(WebApiDbContext dbContext)
         {
             _dbContext = dbContext;
             
         }
 
-        public CourseEntity Fetch(int id)
+        public ClassEntity Fetch(int id)
         {
            
            
                 try
                 {
 
-                    var entity = _dbContext.Courses.FirstOrDefault(item => item.Id == id);
+                    var entity = _dbContext.Classes.FirstOrDefault(item => item.ClassId == id);
                     if (entity == null)
-                        throw new Exception("Course not found");
+                        throw new Exception("Class not found");
 
                     return entity;
 
@@ -41,16 +41,16 @@ namespace ManagementSystem.DataAccessLayer
             
         }
 
-        public List<CourseEntity> FetchList()
+        public List<ClassEntity> FetchList()
         {
            
             
                 try
                 {
 
-                    var entity = _dbContext.Courses;
+                var entity = _dbContext.Classes;
                         
-                        return entity.ToList();
+                    return entity.ToList();
                  
 
                 }
@@ -62,52 +62,48 @@ namespace ManagementSystem.DataAccessLayer
 
             
         }
-        public CourseEntity Insert(CourseEntity course)
+        public ClassEntity Insert(ClassEntity item)
         {
             try 
             {
                
-                
-                    var courseDetails = new CourseEntity
-                    {
-                        Name = course.Name,
-                        Code = course.Code,
-                        Credits = course.Credits,
-                        Description = course.Description,
-                        Department = course.Department,
-                    };
-                    _dbContext.Add(courseDetails);
-                    _dbContext.SaveChanges();
-                    return courseDetails;
+
+                var classDetails = new ClassEntity
+                {
+                    ClassName = item.ClassName,
+                    Id = item.Id,
+                    FacilitatorId = item.FacilitatorId,
+                }; 
+                _dbContext.Add(classDetails);
+                _dbContext.SaveChanges();
+                return classDetails;
                 
             }
             catch(Exception ex)
             {
-                throw new Exception("Error Adding the Course", ex);
+                throw new Exception("Error Adding the Class", ex);
             }
    
                
         }
        
-        public void Update(CourseEntity course)
+        public void Update(ClassEntity item)
         {
 
             try 
             {
                
                 
-                    var entity= Fetch(course.Id);
+                    var entity= Fetch(item.ClassId);
                     
-                    if (course != null)
+                    if (item != null)
                     {
-                        entity.Name = course.Name;
-                        entity.Description = course.Description;
-                        entity.Code = course.Code;
-                        entity.Credits = course.Credits;
-                        entity.Department = course.Department;
+                        entity.ClassName = item.ClassName;
+                        entity.Id = item.Id;
+                        entity.FacilitatorId = item.FacilitatorId;
 
                     }
-                    _dbContext.Courses.Update(entity);
+                    _dbContext.Classes.Update(entity);
                     _dbContext.SaveChanges();
 
                 
@@ -119,16 +115,16 @@ namespace ManagementSystem.DataAccessLayer
             
 
         }
-        public void Delete(CourseEntity course)
+        public void Delete(ClassEntity item)
         {
             try
             {
                 
                 
-                    var entity = Fetch(course.Id);
-                    if (course != null)
+                    var entity = Fetch(item.ClassId);
+                    if (item != null)
                     {
-                        _dbContext.Courses.Remove(entity);
+                        _dbContext.Classes.Remove(entity);
                         _dbContext.SaveChanges();
                     }
                    

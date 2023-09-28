@@ -11,6 +11,10 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddCsla();
 builder.Services.AddScoped<ICourseDAL,CourseDAL>();
+builder.Services.AddScoped<IFacilitatorDAL,FacilitatorDAL>();
+builder.Services.AddScoped<IClassDAL, ClassDAL>();
+builder.Services.AddScoped<ILookupDAL, LookupDAL>();
+builder.Services.AddScoped<IStudentDAL, StudentDAL>();
 builder.Services.AddDbContext<WebApiDbContext>();
 builder.Services.AddMudServices();
 

@@ -1,0 +1,60 @@
+﻿@page "/facilitatorinfo"
+@using Csla;
+@using ManagementSystem.BusinessLogicLayer;
+@using MudBlazor;
+@inject ISnackbar Snackbar
+
+<PageTitle>FacilitatorInfo</PageTitle>
+<br />
+<EditForm Model="@Facilitator">
+    <DataAnnotationsValidator />
+    <Csla.Blazor.CslaValidator />
+    <MudDialog>
+        <DialogContent>
+             <MudGrid class="justify-space-between" >
+            <MudItem sm="10" md="10">
+                    <MudTextField @bind-Value="Facilitator.FacilitatorFullName" Label="Name" Variant="Variant.Outlined" For="(() => Facilitator.FacilitatorFullName)" Immediate>Name</MudTextField>
+            </MudItem>
+            <MudItem sm="10" md="10">
+                    <MudTextField @bind-Value="Facilitator.FacilitatorEmail" Label="Email" For="(() => Facilitator.FacilitatorEmail)" Immediate Variant="Variant.Outlined">Email</MudTextField>
+            </MudItem>
+             <MudItem sm="10" md="10">
+
+                     <MudTextField @bind-Value="Facilitator.FacilitatorIdNumber" Label="Credits" Variant="Variant.Outlined" For="(() => Facilitator.FacilitatorIdNumber)" Immediate>ID Number</MudTextField>
+            </MudItem>
+            <MudItem sm="10" md="10">
+
+                    <MudTextField @bind-Value="Facilitator.FacilitatorPhoneNumber" Label="IdNumber" For="(() => Facilitator.FacilitatorPhoneNumber)" Immediate Variant="Variant.Outlined">Cell Number</MudTextField>
+             </MudItem>
+             </MudGrid>
+        </DialogContent>
+        <DialogActions>
+             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Save" Disabled=@(!Facilitator.IsDirty)>Save</MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
+<br />
+
+
+
+ @code {
+
+    [Parameter]
+    public FacilitatorBL Facilitator { get; set; }
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+   private void Save()
+    {
+        MudDialog.Close(_ = Facilitator.Save());
+
+    }
+
+}
+
+
